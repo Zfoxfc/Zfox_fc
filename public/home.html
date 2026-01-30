@@ -10,7 +10,7 @@
         /* প্রফেশনাল হেডার */
         .header { background: #161b22; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; position: sticky; top: 0; z-index: 1000; }
         
-        /* স্টোর বাটন */
+        /* স্টোর বাটন - ক্লিন গেমিং লুক */
         .store-btn { background: linear-gradient(45deg, #f39c12, #d35400); padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; text-decoration: none; color: white; font-size: 13px; display: flex; align-items: center; gap: 5px; box-shadow: 0 0 10px rgba(211, 84, 0, 0.4); }
         
         /* কয়েন ডিসপ্লে */
@@ -18,14 +18,16 @@
         
         .container { padding: 15px; }
         
-        .package-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+        /* কার্ড ডিজাইন */
+        .package-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; margin-bottom: 15px; transition: 0.3s; }
+        .package-card:hover { border-color: #58a6ff; }
         
         .package-title { font-size: 18px; font-weight: bold; color: #58a6ff; margin-bottom: 5px; }
+        .match-info { font-size: 13px; color: #8b949e; margin-bottom: 12px; display: flex; gap: 10px; }
         
-        .match-info { font-size: 13px; color: gray; margin-bottom: 12px; }
-        
-        .join-btn { width: 100%; background: #238636; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .join-btn:disabled { background: #30363d; color: gray; cursor: not-allowed; }
+        .join-btn { width: 100%; background: #238636; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .join-btn:hover { background: #2ea043; }
+        .join-btn:disabled { background: #30363d; color: #8b949e; cursor: not-allowed; }
 
         /* Modal Style */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 2000; }
@@ -44,7 +46,7 @@
     </div>
 
     <div class="container">
-        <h3 style="margin-top: 0;">Available Tournaments</h3>
+        <h3 style="margin-top: 0; font-size: 16px;">Available Tournaments</h3>
         <div id="packageList">
             <p style="text-align: center; color: gray;">Loading tournaments...</p>
         </div>
@@ -53,7 +55,7 @@
     <div id="confirmModal" class="modal">
         <div class="modal-content">
             <h3 style="color: #58a6ff; margin-top: 0;">Confirm Join</h3>
-            <p id="modalText">আপনি কি এই টুর্নামেন্টে জয়েন করতে চান?</p>
+            <p id="modalText" style="font-size: 14px; color: #e6edf3;"></p>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button onclick="closeModal()" style="flex: 1; padding: 10px; background: #30363d; color: white; border: none; border-radius: 6px;">Cancel</button>
                 <button id="finalJoinBtn" style="flex: 1; padding: 10px; background: #238636; color: white; border: none; border-radius: 6px; font-weight: bold;">Confirm</button>
@@ -73,6 +75,7 @@
 
         async function loadDashboard() {
             try {
+                // আপনার অরিজিনাল API পাথ
                 const res = await fetch(`/api/get-packages?gameId=${user.gameId}`);
                 const data = await res.json();
                 
@@ -93,7 +96,10 @@
                 list.innerHTML += `
                     <div class="package-card">
                         <div class="package-title">${match.Title}</div>
-                        <div class="match-info">⏰ ${match.Time} | 💰 Entry: ${match.Fee} Coins</div>
+                        <div class="match-info">
+                            <span>⏰ ${match.Time}</span>
+                            <span>💰 Fee: ${match.Fee}</span>
+                        </div>
                         <button class="join-btn" ${isJoined ? 'disabled' : ''} onclick='openModal(${JSON.stringify(match)})'>
                             ${isJoined ? '✅ Joined' : 'Join Now'}
                         </button>
@@ -103,7 +109,7 @@
         }
 
         function openModal(match) {
-            document.getElementById('modalText').innerText = `"${match.Title}" এ জয়েন করতে ${match.Fee} কয়েন কাটা হবে।`;
+            document.getElementById('modalText').innerText = `আপনি কি এই টুর্নামেন্টে জয়েন করতে চান? (${match.Fee} Coins)`;
             document.getElementById('finalJoinBtn').onclick = () => processJoin(match);
             document.getElementById('confirmModal').style.display = 'flex';
         }
@@ -126,11 +132,11 @@
                     })
                 });
                 
-                const data = await res.json();
                 if (res.ok) {
-                    alert("জয়েন সফল হয়েছে! ইনবক্স চেক করুন।");
+                    alert("জয়েন সফল হয়েছে!");
                     location.reload();
                 } else {
+                    const data = await res.json();
                     alert(data.message);
                     btn.disabled = false;
                     btn.innerText = "Confirm";
@@ -146,5 +152,4 @@
         loadDashboard();
     </script>
 </body>
-            </html>
-            
+</html>
