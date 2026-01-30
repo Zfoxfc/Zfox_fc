@@ -2,28 +2,25 @@
 import { useEffect, useState } from 'react';
 
 export default function NotificationBar() {
-  const [notifs, setNotifs] = useState([]);
+  const [n, setN] = useState([]);
+  const [m, setM] = useState(false);
 
   useEffect(() => {
+    setM(true);
     fetch("https://sheetdb.io/api/v1/kn4x6d50pr5dm?sheet=Notifications")
-      .then(res => res.json())
-      .then(data => {
-        if(Array.isArray(data)) {
-          setNotifs(data.filter(n => String(n.Is_Read).toLowerCase() === "false"));
-        }
-      });
+      .then(r => r.json())
+      .then(d => {
+        if(Array.isArray(d)) setN(d.filter(x => String(x.Is_Read).toLowerCase() === "false"));
+      }).catch(() => {});
   }, []);
 
-  if (notifs.length === 0) return null;
+  if (!m || n.length === 0) return null;
 
   return (
-    <div className="max-w-6xl mx-auto px-6 mt-4">
-      {notifs.map((n, i) => (
-        <div key={i} className="bg-blue-600/10 border-l-4 border-blue-500 p-3 mb-2 rounded-r-lg">
-          <p className="text-sm text-blue-300 font-medium">📢 {n.Message}</p>
-        </div>
+    <div className="mt-4 space-y-2">
+      {n.map((x, i) => (
+        <div key={i} className="bg-orange-500/10 border-l-4 border-orange-500 p-3 text-orange-200 text-sm">📢 {x.Message}</div>
       ))}
     </div>
   );
-    }
-    
+}
