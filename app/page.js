@@ -3,35 +3,25 @@ import JoinModal from '@/components/JoinModal';
 import NotificationBar from '@/components/Notification';
 
 export default async function Home() {
-  const tournaments = await fetchData("Tournaments");
+  const games = await fetchData("Tournaments");
 
   return (
-    <main className="pb-20">
+    <main className="max-w-6xl mx-auto p-4">
       <NotificationBar />
-      
-      <div className="max-w-6xl mx-auto px-6 mt-8">
-        <h2 className="text-3xl font-black mb-8 italic uppercase tracking-tighter">
-          Available <span className="text-orange-600">Matches</span>
-        </h2>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {tournaments.map((game) => (
-            <div key={game.Game_ID} className="glass-card p-6 flex flex-col justify-between">
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                   <div className="bg-orange-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest">Live</div>
-                   <span className="text-slate-500 text-xs">ID: #{game.Game_ID}</span>
-                </div>
-                <h3 className="text-xl font-bold mb-1">{game.Title}</h3>
-                <p className="text-orange-400 text-sm font-bold mb-4">Entry: ৳{game.Entry_Fee}</p>
-              </div>
-              
-              <JoinModal game={game} />
-            </div>
-          ))}
-        </div>
+      <h2 className="text-2xl font-bold my-8 italic border-l-4 border-orange-500 pl-3 uppercase tracking-tighter">Matches Lobby</h2>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.isArray(games) && games.map((g, i) => (
+          <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-3xl flex flex-col justify-between">
+             <div>
+               <h3 className="text-xl font-bold text-slate-100">{g.Title}</h3>
+               <p className="text-green-500 font-bold my-2">Prize: ৳{g.Prize_Pool}</p>
+               <p className="text-xs text-slate-500 mb-6 italic">Entry: ৳{g.Entry_Fee}</p>
+             </div>
+             <JoinModal game={g} />
+          </div>
+        ))}
       </div>
     </main>
   );
     }
-            
+    
