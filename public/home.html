@@ -75,7 +75,6 @@
 
         async function loadDashboard() {
             try {
-                // আপনার অরিজিনাল API পাথ
                 const res = await fetch(`/api/get-packages?gameId=${user.gameId}`);
                 const data = await res.json();
                 
@@ -132,11 +131,11 @@
                     })
                 });
                 
+                const data = await res.json();
                 if (res.ok) {
-                    alert("জয়েন সফল হয়েছে!");
+                    alert("জয়েন সফল হয়েছে! ইনবক্স চেক করুন।");
                     location.reload();
                 } else {
-                    const data = await res.json();
                     alert(data.message);
                     btn.disabled = false;
                     btn.innerText = "Confirm";
