@@ -86,4 +86,48 @@ app.post('/api/join', async (req, res) => {
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// ভুল অ্যাটেম্পট ট্র্যাকিংয়ের জন্য অবজেক্ট
+const loginAttempts = {};
+
+app.post('/api/login', async (req, res) => {
+    const { userId, pin } = req.body;
+    const now = Date.now();
+
+    // ১. পিন ডিজিট চেক
+    if (pin.length !== 4) {
+        return res.json({ success: false, message: "Invalid PIN format" });
+    }
+
+    // ২. ব্রুট ফোর্স প্রোটেকশন চেক
+    if (loginAttempts[userId] && loginAttempts[userId].count >= 3) {
+        const waitTime = 20 * 60 * 1000; // ২০ মিনিট
+        if (now - loginAttempts[userId].lastAttempt < waitTime) {
+            return res.json({ success: false, message: "Too many attempts. Try again after 20 mins." });
+        } else {
+            loginAttempts[userId].count = 0; // সময় পার হলে রিসেট
+        }
+    }
+
+    try {
+        const response = await fetch(`${SHEETDB_URL}/search?email=${userId}&sheet=Users`);
+        const users = await response.json();
+        const user = users[0];
+
+        if (user && user.password === pin) {
+            delete loginAttempts[userId]; // সফল হলে ট্র্যাকার ডিলিট
+            res.json({ success: true });
+        } else {
+            // ভুল পাসওয়ার্ড ট্র্যাকিং
+            if (!loginAttempts[userId]) loginAttempts[userId] = { count: 1, lastAttempt: now };
+            else {
+                loginAttempts[userId].count++;
+                loginAttempts[userId].lastAttempt = now;
+            }
+            res.json({ success: false, message: `Wrong PIN! Attempts left: ${3 - loginAttempts[userId].count}` });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+});
+    
   
