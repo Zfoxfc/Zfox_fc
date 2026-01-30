@@ -130,4 +130,44 @@ app.post('/api/login', async (req, res) => {
     }
 });
     
-  
+  app.post('/api/create-account', async (req, res) => {
+    const { name, userId, pin, email, ref } = req.body;
+
+    try {
+        // ১. ডুপ্লিকেট আইডি চেক
+        const checkRes = await fetch(`${SHEETDB_URL}/search?nickname=${userId}&sheet=Users`);
+        const existingUsers = await checkRes.json();
+
+        if (existingUsers.length > 0) {
+            return res.json({ success: false, message: "User ID already exists!" });
+        }
+
+        // ২. কয়েন ক্যালকুলেশন (রেফারেল থাকলে ২ কয়েন, না থাকলে ০)
+        const initialCoins = ref ? 2 : 0;
+
+        // ৩. নতুন ইউজার ডাটা শিটে সেভ করা
+        const newUser = {
+            nickname: userId,
+            name: name,
+            email: email || "N/A",
+            password: pin,
+            coins: initialCoins,
+            joined_packages: "",
+            unread_messages: "False",
+            referral_used: ref || "None"
+        };
+
+        const saveRes = await fetch(`${SHEETDB_URL}?sheet=Users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: [newUser] })
+        });
+
+        if (saveRes.ok) res.json({ success: true });
+        else res.json({ success: false, message: "Failed to save account." });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error during registration." });
+    }
+});
+                
