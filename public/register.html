@@ -10,11 +10,11 @@
 
     <div style="background: #161b22; padding: 30px; border-radius: 15px; width: 320px; text-align: center; border: 1px solid #30363d;">
         <h2 style="color: #58a6ff;">CREATE ACCOUNT</h2>
-        <p style="font-size: 14px; color: gray;">Join the Elite Nexus Tournament</p>
+        <p style="font-size: 14px; color: gray;">Join the Zfox_Fc Tournament 26</p>
         
         <input type="text" id="regName" placeholder="Full Name" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #30363d; background: #0d1117; color: white; box-sizing: border-box;">
         
-        <input type="number" id="regId" placeholder="Game UID (e.g. 1818398816)" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #30363d; background: #0d1117; color: white; box-sizing: border-box;">
+        <input type="number" id="regId" placeholder="Game UID (7103521001)" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #30363d; background: #0d1117; color: white; box-sizing: border-box;">
         
         <input type="password" id="regPin" placeholder="Set 4-6 Digit PIN" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #30363d; background: #0d1117; color: white; box-sizing: border-box;">
         
@@ -53,7 +53,7 @@
 
                 if (response.ok) {
                     alert("একাউন্ট তৈরি সফল হয়েছে! এখন লগইন করুন।");
-                    window.location.href = 'index.html';
+                    window.location.href = 'home.html';
                 } else {
                     errorMsg.innerText = data.message;
                     btn.disabled = false;
